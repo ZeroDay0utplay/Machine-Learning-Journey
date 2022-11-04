@@ -66,17 +66,14 @@ class LinearRegression:
     def Gradient(self, w, b, lambda_=1):
         dj_dw = np.zeros(self.n)
         dj_db = 0
+        
 
         for i in range(self.m):
-
             error = np.dot(self.X_train[i], w) + b - self.y[i]
-
             for j in range(self.n):
                 dj_dw[j] += error*self.X_train[i, j]
-            dj_db += error
-        
-        for j in range(self.n):
-            dj_dw[j] += (lambda_*w[j])
+            dj_db += error            
+            
 
         dj_dw /= self.m
         dj_db /= self.m
@@ -84,7 +81,7 @@ class LinearRegression:
         return dj_dw, dj_db
 
     
-    def GradientDescent(self, alpha, lambda_=1, epsilon = 1e-8):
+    def GradientDescent(self, alpha=0.01, lambda_=1, epsilon = 1e-8):
         w = np.zeros(self.n)
         b = 0
         prev_err = self.Cost(w, b)+1
@@ -95,7 +92,7 @@ class LinearRegression:
                 return w, b
             prev_err = error
             dj_dw, dj_db = self.Gradient(w, b, lambda_)
-            w = w - alpha * dj_dw
+            w = w*(1-((alpha*lambda_)/self.m)) - alpha * dj_dw
             b = b - alpha * dj_db
         
 
@@ -127,7 +124,7 @@ lr = LinearRegression("adm_data.csv")
 test = lr.X_train[0]
 
 lr.feature_scaling()
-w, b = lr.GradientDescent(0.01, 0.1)
+w, b = lr.GradientDescent(0.01, 0.001)
 
 print(f"W: {w}\nb: {b}")
 print(lr.accuracy(w, b, lr.X_train))
