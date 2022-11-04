@@ -3,9 +3,5 @@ b = 0.3923261891508853
 
 
 test = [337, 118, 4, 4.5, 4.5, 9.65, 1]
-
-ans=0
-for i in range(len(w)):
-    ans += test[i]*w[i]
-
-print(ans+b)
+from scipy import stats
+print(stats.zscore(test))
