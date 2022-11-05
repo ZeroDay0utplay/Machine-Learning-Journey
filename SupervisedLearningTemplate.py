@@ -84,11 +84,11 @@ class LinearRegression:
     def GradientDescent(self, alpha=0.01, lambda_=1, epsilon = 1e-8):
         w = np.zeros(self.n)
         b = 0
-        prev_err = self.Cost(w, b)+1
+        prev_err = self.Cost(w, b, lambda_)+1
 
         # until the cost is decreasing really too slowly
         while(1):
-            error = self.Cost(w, b)
+            error = self.Cost(w, b, lambda_)
             if (abs(prev_err - error) < epsilon):
                 return w, b
             prev_err = error
@@ -116,13 +116,11 @@ class LinearRegression:
         for i in range(self.m):
             if (abs(self.predict(w, b, test[i]) - self.y[i]) < epsilon): tot+=1
         
-        return (tot/self.m)*100
+        return "Prediction Accuracy: " + str((tot/self.m)*100) + " %"
 
 
 
 lr = LinearRegression("adm_data.csv")
-
-test = lr.X_train[0]
 
 lr.feature_scaling()
 w, b = lr.GradientDescent(0.01, 0.1)
