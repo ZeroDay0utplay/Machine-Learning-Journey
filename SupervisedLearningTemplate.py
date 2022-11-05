@@ -5,6 +5,20 @@ from scipy import stats
 
 
 
+class bcolors:
+    HEADER = '\033[95m'
+    OKBLUE = '\033[94m'
+    OKCYAN = '\033[96m'
+    OKGREEN = '\033[92m'
+    WARNING = '\033[93m'
+    FAIL = '\033[91m'
+    ENDC = '\033[0m'
+    BOLD = '\033[1m'
+    UNDERLINE = '\033[4m'
+
+
+
+
 class LinearRegression:
     def __init__(self, csv_file):
         
@@ -82,16 +96,22 @@ class LinearRegression:
 
     
     def GradientDescent(self, alpha=0.01, lambda_=1, epsilon = 1e-8):
+        print("\n" + bcolors.BOLD + bcolors.FAIL + "[+] Training ...\n" + bcolors.ENDC)
         w = np.zeros(self.n)
         b = 0
         prev_err = self.Cost(w, b, lambda_)+1
+        i=0
 
         # until the cost is decreasing really too slowly
         while(1):
+            i+=1
             error = self.Cost(w, b, lambda_)
             if (abs(prev_err - error) < epsilon):
+                print(f"{bcolors.BOLD + bcolors.OKGREEN}\n[-] W: {w}\n\n[-] b: {b}\n")
                 return w, b
             prev_err = error
+            if (i%1000 == 0):
+                print(bcolors.WARNING + "[°] Squared Error Function: " + str(error) + "\n")
             dj_dw, dj_db = self.Gradient(w, b, lambda_)
             w = w*(1-((alpha*lambda_)/self.m)) - alpha * dj_dw # using the lambda factor for regularization
             b = b - alpha * dj_db
@@ -116,7 +136,8 @@ class LinearRegression:
         for i in range(self.m):
             if (abs(self.predict(w, b, test[i]) - self.y[i]) < epsilon): tot+=1
         
-        return "Prediction Accuracy: " + str((tot/self.m)*100) + " %"
+        print(bcolors.BOLD + bcolors.UNDERLINE + bcolors.OKCYAN + "[+] Prediction Accuracy: " + str((tot/self.m)*100) + "%\n")
+        return (tot/self.m)*100
 
 
 
@@ -125,5 +146,4 @@ lr = LinearRegression("adm_data.csv")
 lr.feature_scaling()
 w, b = lr.GradientDescent(0.01, 0.1)
 
-print(f"W: {w}\nb: {b}")
-print(lr.accuracy(w, b, lr.X_train))
+acc = lr.accuracy(w, b, lr.X_train)
