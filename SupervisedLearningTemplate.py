@@ -86,13 +86,14 @@ class LinearRegression:
         b = 0
         prev_err = self.Cost(w, b)+1
 
+        # until the cost is decreasing really too slowly
         while(1):
             error = self.Cost(w, b)
             if (abs(prev_err - error) < epsilon):
                 return w, b
             prev_err = error
             dj_dw, dj_db = self.Gradient(w, b, lambda_)
-            w = w*(1-((alpha*lambda_)/self.m)) - alpha * dj_dw
+            w = w*(1-((alpha*lambda_)/self.m)) - alpha * dj_dw # using the lambda factor for regularization
             b = b - alpha * dj_db
         
 
@@ -110,7 +111,7 @@ class LinearRegression:
 
     def accuracy(self, w, b, test):
         tot = 0
-        epsilon = 5e-2
+        epsilon = 1e-1
         
         for i in range(self.m):
             if (abs(self.predict(w, b, test[i]) - self.y[i]) < epsilon): tot+=1
@@ -124,7 +125,7 @@ lr = LinearRegression("adm_data.csv")
 test = lr.X_train[0]
 
 lr.feature_scaling()
-w, b = lr.GradientDescent(0.01, 0.001)
+w, b = lr.GradientDescent(0.01, 0.1)
 
 print(f"W: {w}\nb: {b}")
 print(lr.accuracy(w, b, lr.X_train))
